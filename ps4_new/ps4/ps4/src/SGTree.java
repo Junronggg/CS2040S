@@ -121,17 +121,17 @@ public class SGTree {
         if (node != null) {
             double twoOverThree = 2.0 / 3.0; //prevent 2/3 become 0
             return (node.left == null || node.left.weight <= twoOverThree * node.weight)
-                                    && (node.right == null || node.right.weight <= twoOverThree * node.weight);
+                    && (node.right == null || node.right.weight <= twoOverThree * node.weight);
         } else {
             return true;
         }
     }
 
     /**
-    * Rebuilds the subtree rooted at node
-    * 
-    * @param node the root of the subtree to rebuild
-    */
+     * Rebuilds the subtree rooted at node
+     *
+     * @param node the root of the subtree to rebuild
+     */
     public void rebuild(TreeNode node) {
         // Error checking: cannot rebuild null tree
         if (node == null) {
@@ -162,25 +162,21 @@ public class SGTree {
     }
 
     /**
-    * Inserts a key into the tree
-    *
-    * @param key the key to insert
-    */
+     * Inserts a key into the tree
+     *
+     * @param key the key to insert
+     */
+    // a node to record the highest
+    TreeNode highest;
     public void insert(int key) {
+        highest = null;
         if (root == null) {
             root = new TreeNode(key);
             return;
         }
-
         insert(key, root);
-        if (!checkBalance(root)) {
-            rebuild(root);
-        } else if (!checkBalance(root.left)) {
-            rebuild(root.left);
-        } else if (!checkBalance(root.right)) {
-            rebuild(root.right);
-        } else {
-            return;
+        if (highest != null) {
+            rebuild(highest);
         }
     }
 
@@ -190,22 +186,21 @@ public class SGTree {
             if (node.left == null) {
                 node.left = new TreeNode(key);
                 node.left.parent = node;
-
             } else {
-
                 insert(key, node.left);
             }
         } else {
             if (node.right == null) {
                 node.right = new TreeNode(key);
                 node.right.parent = node;
-
             } else {
                 insert(key, node.right);
-
             }
         }
         fixWeight(node);
+        if (!checkBalance(node)) {
+            highest = node;
+        }
     }
 
     // Simple main function for debugging purposes
